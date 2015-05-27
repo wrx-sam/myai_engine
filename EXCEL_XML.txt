@@ -1,0 +1,26 @@
+Sub Macro1()
+        iPos = InStr(ThisWorkbook.Name, ".")
+        szTableName = Left(ThisWorkbook.Name, iPos - 1)
+        szOutFileName = "E:\test.xml"
+        If Dir(szOutFileName) <> "" Then
+            Kill (szOutFileName)
+        End If
+        ' 打开文件
+        Open szOutFileName For Output As #1
+        szContent = "<Class name = " & szTableName & "_TB" & ">"
+        Print #1, szContent
+        For Each Unit In Range(Cells(1, 1), Cells(1, 5))
+        If Unit.Value = "" Then
+            Exit For
+        Else
+            Unit.Offset(1, 0).Select
+            iPos = InStr(Unit.Offset(1, 0).Value, ":")
+            szContent = "<Prop name = " & """" & Left(Unit.Offset(1, 0).Value, iPos - 1) & """" & "type = " & """" & Unit.Value & """" & "count = 1" & "/>"
+            Print #1, szContent
+        End If
+    Next
+        ' 关闭文件
+        Print #1, "</Class>"
+        Close #1
+    Application.Goto Reference:="Macro1"
+End Sub
